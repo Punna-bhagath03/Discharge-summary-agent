@@ -13,6 +13,7 @@ Required validations (architecture.md §5.3, requirements.md §8):
   - source_end_char <= len(source_text)
   - ocr_confidence in [0.0, 1.0]
   - extraction_confidence in [0.0, 1.0]
+  - field_value is not empty or whitespace-only
 """
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -158,6 +159,14 @@ class Evidence(BaseModel):
         """
         if value < 0:
             raise ValueError("source_start_char must be >= 0")
+        return value
+
+    @field_validator("field_value")
+    @classmethod
+    def field_value_must_not_be_blank(cls, value: str) -> str:
+        """Required value-bearing evidence must not be empty or whitespace-only."""
+        if not value.strip():
+            raise ValueError("field_value must not be empty or whitespace-only")
         return value
 
     @model_validator(mode="after")

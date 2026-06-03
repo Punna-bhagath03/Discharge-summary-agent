@@ -9,14 +9,14 @@ must be traceable to one or more entries in supporting_evidence_ids, each of
 which resolves to an Evidence record carrying exact-span provenance.'
 
 The architecture mandates typed, structured clinical entries — not free-form
-text and not Dict[str, Any].  SummaryEntry provides a minimal typed
-structure that mirrors the Evidence (field_name / field_value) model, keeping
-clinical entries consistent with the extraction schema they derive from.
+text and not Dict[str, Any].  SummaryEntry mirrors the Evidence
+(field_name / field_value) model and carries its own supporting evidence IDs
+so every summary entry is individually traceable.
 """
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class SummaryEntry(BaseModel):
@@ -28,10 +28,9 @@ class SummaryEntry(BaseModel):
     follow_up_instructions (SR-23).  Every entry must be traceable to one or
     more Evidence records via DischargeSummary.supporting_evidence_ids (SR-24).
 
-    field_name and field_value mirror the Evidence extraction model
-    deliberately: the Summary Generator composes entries directly from
-    validated Evidence records, so maintaining the same naming convention
-    preserves auditability without requiring translation.
+    field_name and field_value mirror the Evidence extraction model.
+    supporting_evidence_ids makes each individual entry traceable to one or
+    more Evidence records.
     """
 
     field_name: str = Field(
@@ -51,6 +50,27 @@ class SummaryEntry(BaseModel):
             "never fabricated."
         ),
     )
+    supporting_evidence_ids: list[str] = Field(
+        ...,
+        min_length=1,
+        description=(
+            "Identifiers of Evidence records that support this specific "
+            "summary entry.  Must contain at least one evidence_id so every "
+            "entry is individually traceable."
+        ),
+    )
+
+    @field_validator("supporting_evidence_ids")
+    @classmethod
+    def supporting_evidence_ids_must_not_be_empty(
+        cls, value: list[str]
+    ) -> list[str]:
+        """Every SummaryEntry must be individually evidence-grounded."""
+        if not value:
+            raise ValueError(
+                "supporting_evidence_ids cannot be empty for a SummaryEntry"
+            )
+        return value
 
 
 class DischargeSummary(BaseModel):
@@ -152,3 +172,25 @@ class DischargeSummary(BaseModel):
             "Summary Generator."
         ),
     )
+
+    @model_validator(mode="after")
+    def clinical_entries_must_have_supporting_evidence(
+        self,
+    ) -> "DischargeSummary":
+        """Clinical entries must never exist without supporting evidence."""
+        clinical_sections = (
+            self.diagnoses,
+            self.medications,
+            self.allergies,
+            self.procedures,
+            self.pending_results,
+            self.follow_up_instructions,
+        )
+        for section in clinical_sections:
+            for entry in section:
+                if not entry.supporting_evidence_ids:
+                    raise ValueError(
+                        "every SummaryEntry must include at least one "
+                        "supporting_evidence_id"
+                    )
+        return self

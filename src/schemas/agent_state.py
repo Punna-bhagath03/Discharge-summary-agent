@@ -21,6 +21,29 @@ from pydantic import BaseModel, Field, field_validator
 from src.schemas.conflict import Conflict
 
 
+class PageReference(BaseModel):
+    """
+    Reference to a single page within a patient document set.
+
+    document_name and page_number together uniquely identify the page for
+    targeted OCR retry within the owning AgentState.patient_id.
+    """
+
+    document_name: str = Field(
+        ...,
+        description=(
+            "Name of the source document containing the low-confidence page."
+        ),
+    )
+    page_number: int = Field(
+        ...,
+        ge=1,
+        description=(
+            "1-based page number within document_name for targeted OCR retry."
+        ),
+    )
+
+
 class AgentState(BaseModel):
     """
     Explicit, inspectable working memory for the agent loop.
@@ -90,10 +113,10 @@ class AgentState(BaseModel):
             "the full ReviewFlag objects are held by the Review Flag store."
         ),
     )
-    low_confidence_pages: list[int] = Field(
+    low_confidence_pages: list[PageReference] = Field(
         default_factory=list,
         description=(
-            "1-based page numbers whose ocr_confidence fell below the "
+            "Document/page references whose ocr_confidence fell below the "
             "configured threshold.  The OCR Retry Tool reads this field "
             "directly and re-OCRs only the listed pages."
         ),

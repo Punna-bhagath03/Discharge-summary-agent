@@ -7,7 +7,7 @@ from src.schemas (rather than from individual submodules) is the intended
 pattern for all other phases of the project.
 """
 
-from src.schemas.agent_state import AgentState
+from src.schemas.agent_state import AgentState, PageReference
 from src.schemas.conflict import Conflict
 from src.schemas.discharge_summary import DischargeSummary, SummaryEntry
 from src.schemas.enums import EvidenceType, ReviewSeverity, TraceStatus
@@ -29,6 +29,7 @@ __all__ = [
     "Conflict",
     "ReviewFlag",
     "AgentState",
+    "PageReference",
     "TraceStep",
     "DischargeSummary",
     # Supporting types
