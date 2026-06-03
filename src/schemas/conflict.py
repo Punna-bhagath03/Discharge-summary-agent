@@ -28,6 +28,22 @@ class Conflict(BaseModel):
     Store.
     """
 
+    conflict_id: str = Field(
+        ...,
+        description=(
+            "Unique identifier for this Conflict record.  Makes the record "
+            "individually addressable and auditable, consistent with every "
+            "other first-class artifact in the system."
+        ),
+    )
+    patient_id: str = Field(
+        ...,
+        description=(
+            "Reference to the owning Patient record.  All Conflict records "
+            "are grouped by patient_id.  Required by architecture §4.1 and "
+            "SR-4: every artifact references a Patient via patient_id."
+        ),
+    )
     field_name: str = Field(
         ...,
         description=(

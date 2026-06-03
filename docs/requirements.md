@@ -209,11 +209,13 @@ schemas: `Patient`, `Page`, `Evidence`, `Conflict`, `ReviewFlag`,
 
 ### 4.3 `Evidence`
 - **SR-7.** `Evidence` records shall include:
-  `evidence_id`, `evidence_type`, `field_name`, `field_value`,
+  `evidence_id`, `patient_id`, `evidence_type`, `field_name`, `field_value`,
   `document_name`, `page_number`, `source_text`,
   `source_start_char`, `source_end_char`, `section`,
   `ocr_confidence`, `extraction_confidence`, `extraction_method`,
   `status`.
+- **SR-7a.** `Evidence.patient_id` shall reference the owning `Patient`
+  record, consistent with SR-4.
 - **SR-8.** `Evidence` records without a complete exact-span
   provenance set shall be rejected by Evidence Validation.
 - **SR-9.** `ocr_confidence` shall represent confidence in text
@@ -229,7 +231,13 @@ schemas: `Patient`, `Page`, `Evidence`, `Conflict`, `ReviewFlag`,
 
 ### 4.4 `Conflict`
 - **SR-11.** `Conflict` records shall include:
-  `field_name`, `conflicting_values`, `evidence_ids`.
+  `conflict_id`, `patient_id`, `field_name`, `conflicting_values`,
+  `evidence_ids`.
+- **SR-11a.** `conflict_id` shall uniquely identify the Conflict record,
+  making it individually addressable consistent with every other
+  first-class artifact.
+- **SR-11b.** `Conflict.patient_id` shall reference the owning `Patient`
+  record, consistent with SR-4.
 - **SR-12.** `conflicting_values` shall be a list of the values in
   disagreement, and `evidence_ids` shall be a list of the evidence
   records supporting those values.
@@ -238,8 +246,10 @@ schemas: `Patient`, `Page`, `Evidence`, `Conflict`, `ReviewFlag`,
 
 ### 4.5 `ReviewFlag`
 - **SR-14.** `ReviewFlag` records shall include:
-  `flag_id`, `category`, `severity`, `message`, `evidence_ids`,
-  `related_page`, `created_at`, `status`.
+  `flag_id`, `patient_id`, `category`, `severity`, `message`,
+  `evidence_ids`, `related_page`, `created_at`, `status`.
+- **SR-14a.** `ReviewFlag.patient_id` shall reference the owning `Patient`
+  record, consistent with SR-4.
 - **SR-15.** `ReviewFlag` records shall always reference the
   underlying `Evidence` via `evidence_ids`. Free-floating review
   flags are not permitted.

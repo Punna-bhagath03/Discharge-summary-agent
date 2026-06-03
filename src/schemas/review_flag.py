@@ -34,6 +34,14 @@ class ReviewFlag(BaseModel):
         ...,
         description="Unique identifier for this ReviewFlag.",
     )
+    patient_id: str = Field(
+        ...,
+        description=(
+            "Reference to the owning Patient record.  All ReviewFlag records "
+            "are grouped by patient_id.  Required by architecture §4.1 and "
+            "SR-4: every artifact references a Patient via patient_id."
+        ),
+    )
     category: str = Field(
         ...,
         description=(

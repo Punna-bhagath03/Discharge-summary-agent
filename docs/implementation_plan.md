@@ -76,9 +76,9 @@ recognized text that `Evidence` is extracted from, with spans
 `Evidence` must support the full exact-span provenance set
 (`document_name`, `page_number`, `source_text`,
 `source_start_char`, `source_end_char`) alongside `evidence_id`,
-`evidence_type`, `field_name`, `field_value`, `section`,
-`ocr_confidence`, `extraction_confidence`, `extraction_method`, and
-`status`.
+`patient_id` (referencing the `Patient` record), `evidence_type`,
+`field_name`, `field_value`, `section`, `ocr_confidence`,
+`extraction_confidence`, `extraction_method`, and `status`.
 `ocr_confidence` represents confidence in text recognition;
 `extraction_confidence` represents confidence in structured
 extraction. `evidence_type` identifies the kind of evidence, such as
@@ -88,13 +88,14 @@ field; `field_value` contains the extracted value. Example:
 `evidence_type = medication`, `field_name = medication_name`,
 `field_value = metformin`.
 
-`Conflict` must include `field_name`, `conflicting_values`, and
-`evidence_ids`. It must be self-contained and auditable without
-re-querying the Evidence Store.
+`Conflict` must include `conflict_id` (unique identifier),
+`patient_id` (referencing the `Patient` record), `field_name`,
+`conflicting_values`, and `evidence_ids`. It must be self-contained
+and auditable without re-querying the Evidence Store.
 
 `ReviewFlag` must reference `Evidence` via `evidence_ids` and include
-`flag_id`, `category`, `severity`, `message`, `related_page`,
-`created_at`, and `status`.
+`flag_id`, `patient_id` (referencing the `Patient` record), `category`,
+`severity`, `message`, `related_page`, `created_at`, and `status`.
 
 `AgentState` must include `patient_id` (referencing the `Patient`
 record), `iteration`, `current_goal`, `completed_goals`,

@@ -259,6 +259,7 @@ text recognition and is the signal used to populate
 Every `Evidence` record must support:
 
 - `evidence_id`
+- `patient_id` (references the `Patient` record)
 - `evidence_type`
 - `field_name`
 - `field_value`
@@ -297,10 +298,15 @@ into a single confidence field.
 
 Every `Conflict` record must support:
 
+- `conflict_id`
+- `patient_id` (references the `Patient` record)
 - `field_name`
 - `conflicting_values`
 - `evidence_ids`
 
+`conflict_id` uniquely identifies the record, making it individually
+addressable and consistent with every other first-class artifact.
+`patient_id` ties the record to its owning `Patient`.
 `conflicting_values` is a list of the values in disagreement.
 `evidence_ids` is a list of the evidence records supporting those
 values. Conflict objects must be self-contained and auditable without
@@ -312,6 +318,7 @@ field, disputed values, or supporting evidence.
 Every `ReviewFlag` must support:
 
 - `flag_id`
+- `patient_id` (references the `Patient` record)
 - `category`
 - `severity`
 - `message`
