@@ -2,9 +2,10 @@
 Public API for src/services.
 
 Phase 4 delivers EvidenceExtractionService.  Phase 5 delivers
-EvidenceValidationService.  Subsequent phases will add
-MedicationReconciliationService, ConflictDetectionService,
-PendingResultsService, and SummaryGenerationService as each phase lands.
+EvidenceValidationService.  Phase 6 delivers
+MedicationReconciliationService.  Subsequent phases will add
+ConflictDetectionService, PendingResultsService, and
+SummaryGenerationService as each phase lands.
 
 Architecture reference — architecture.md §6:
   'src/services/ — higher-level orchestrations that compose tools
@@ -14,8 +15,12 @@ Architecture reference — architecture.md §6:
 
 from src.services.evidence_extraction_service import EvidenceExtractionService
 from src.services.evidence_validation_service import EvidenceValidationService
+from src.services.medication_reconciliation_service import (
+    MedicationReconciliationService,
+)
 
 __all__ = [
     "EvidenceExtractionService",
     "EvidenceValidationService",
+    "MedicationReconciliationService",
 ]
