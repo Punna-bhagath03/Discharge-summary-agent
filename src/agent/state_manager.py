@@ -34,8 +34,8 @@ Design constraints enforced by this module:
   - completion_score is stored by set_completion_score(); it is never derived
     here.  The Planner (Phase 10) owns the scoring formula and readiness
     policy.
-  - summary_ready is never derived here.  The Planner (Phase 10) determines
-    readiness and applies it via a future set_summary_ready() transition.
+  - summary_ready is stored by set_summary_ready(); it is never derived here.
+    The Planner (Phase 10) determines readiness policy.
   - Loop termination is never decided here.  The Executor / Agent Loop
     (Phase 11) reads AgentState and decides whether to continue.
   - Planner, Tools, and Trace System must not call mutating methods directly —
@@ -448,6 +448,27 @@ class AgentStateManager:
                 f"completion_score must be in [0.0, 1.0]; got {score!r}"
             )
         return state.model_copy(update={"completion_score": score})
+
+    def set_summary_ready(self, state: AgentState, ready: bool) -> AgentState:
+        """
+        Store summary_ready computed externally by the Planner.
+
+        Consumer: Executor (Phase 11) applying a Planner readiness decision.
+        Citation: requirements.md FR-33; architecture.md §5.8.
+
+        Parameters
+        ----------
+        state:
+            Current AgentState.  Not modified.
+        ready:
+            Whether the Planner considers the run ready for summary generation.
+
+        Returns
+        -------
+        AgentState
+            New state with summary_ready set to ready.
+        """
+        return state.model_copy(update={"summary_ready": ready})
 
     # =========================================================================
     # Iteration transition

@@ -216,6 +216,8 @@ validated evidence, with provenance preserved for every entry.
 
 ### Phase 7 — Conflict Detection
 
+Normative policies: `docs/adr/ADR-007` through `ADR-016`.
+
 Implement the Conflict Detection Tool. It identifies disagreements
 between evidence items referring to the same field and emits
 `Conflict` records together with `ReviewFlag` records. Each
