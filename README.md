@@ -245,6 +245,8 @@ pytest tests/ -q
 
 There is no packaged application entry point yet. Use the services and `build_agent_loop()` from `src/agent/wiring.py` in scripts or tests, with data seeded into `StorageService` first.
 
-## License
-
-Not specified in this repository.
+so, this is my idealogy/ research / designing of this assessment --
+```
+https://www.notion.so/Task-373d8ef65bef804bbafce281bd0f059d?source=copy_link
+```
+you can check out that here 
