@@ -1,8 +1,9 @@
 """
 Public API for src/services.
 
-Phase 4 delivers EvidenceExtractionService.  Subsequent phases will add
-EvidenceValidationService, ConflictDetectionService, MedicationReconciliationService,
+Phase 4 delivers EvidenceExtractionService.  Phase 5 delivers
+EvidenceValidationService.  Subsequent phases will add
+MedicationReconciliationService, ConflictDetectionService,
 PendingResultsService, and SummaryGenerationService as each phase lands.
 
 Architecture reference — architecture.md §6:
@@ -12,7 +13,9 @@ Architecture reference — architecture.md §6:
 """
 
 from src.services.evidence_extraction_service import EvidenceExtractionService
+from src.services.evidence_validation_service import EvidenceValidationService
 
 __all__ = [
     "EvidenceExtractionService",
+    "EvidenceValidationService",
 ]
