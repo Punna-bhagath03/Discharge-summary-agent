@@ -93,7 +93,6 @@ class StorageService:
     _evidence                  : evidence_id → Evidence          (primary)
     _evidence_patient_index    : patient_id  → [evidence_id …]  (index)
     _conflicts                 : patient_id  → [Conflict …]     (grouped)
-    _conflict_id_index         : conflict_id → Conflict          (primary)
     _review_flags              : flag_id     → ReviewFlag         (primary)
     _review_flags_patient_index: patient_id  → [flag_id …]       (index)
     _trace                     : patient_id  → [TraceStep …]     (append-only)
@@ -110,9 +109,8 @@ class StorageService:
         self._evidence: dict[str, Evidence] = {}
         self._evidence_patient_index: dict[str, list[str]] = {}
 
-        # Conflict store — grouped by patient_id + primary index by conflict_id
+        # Conflict store — grouped by patient_id
         self._conflicts: dict[str, list[Conflict]] = {}
-        self._conflict_id_index: dict[str, Conflict] = {}
 
         # Review flag store — primary index + patient grouping index
         self._review_flags: dict[str, ReviewFlag] = {}
@@ -388,26 +386,11 @@ class StorageService:
 
         Patient grouping is read from conflict.patient_id, which is a required
         field on the Conflict schema (§4.1, §4.4, SR-4, SR-11b).
-        Individual lookup by conflict_id is supported via _conflict_id_index.
 
         Architecture: §3.8, FR-28; implementation_plan Phase 2 — save_conflict()
         is an explicitly named required storage operation.
         """
         self._conflicts.setdefault(conflict.patient_id, []).append(conflict)
-        self._conflict_id_index[conflict.conflict_id] = conflict
-
-    def get_conflict(self, conflict_id: str) -> Conflict | None:
-        """
-        Return the Conflict record for conflict_id, or None if not found.
-
-        Individual lookup is now supported because Conflict carries a
-        conflict_id field (§4.4, SR-11a).  This enables trace replay and
-        audit tools to resolve Conflict references individually.
-
-        Architecture: §4.4, SR-11a — conflict_id uniquely identifies the
-        record.
-        """
-        return self._conflict_id_index.get(conflict_id)
 
     def get_conflicts_for_patient(self, patient_id: str) -> list[Conflict]:
         """

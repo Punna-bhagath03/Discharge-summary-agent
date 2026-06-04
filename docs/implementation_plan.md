@@ -129,12 +129,14 @@ other component goes through it.
 
 Required operations:
 
+- `save_patient()`
+- `get_patient()`
 - `save_page()`
 - `save_evidence()`
 - `save_trace()`
 - `save_review_flag()`
 - `save_conflict()`
-- `load_patient()`
+- `get_conflicts_for_patient()`
 
 All operations must preserve the full provenance carried by their
 inputs. `save_evidence()` is the only path into the Evidence Store
